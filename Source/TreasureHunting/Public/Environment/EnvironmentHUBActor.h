@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Environment/THBaseActor.h"
+#include "THCoreTypes.h"
 #include "EnvironmentHUBActor.generated.h"
+
 
 UCLASS()
 class TREASUREHUNTING_API AEnvironmentHUBActor : public AActor
@@ -47,18 +49,18 @@ private:
     FVector GetActorSize(TSubclassOf<ATHBaseActor>& Actor) const;
 
 
-
     int MakeRandomOddNumber(int32 Min, int32 Max);
 
-    void GetCoordsMap(TArray<int32>& Map, const int32& Lenght, const int32& Width, const FVector2D& StartCoord);
+    void GetCoordsMap(TArray<int32>& Map, const int32& Lenght, const int32& Width);
 
     void FillStartCoordsMap(TArray<int32>& Map, const int32& Lenght, const int32& Width);
 
-    void GetNeighbours(
-        const int32 Height, const int32 Width, const TArray<int32>& Map, const FVector2D StartPoint, TArray<FVector2D>& Neighbors);
+    void GetNeighbours(const int32 Height, const int32 Width, const TArray<int32>& Map, const FPoint StartPoint, TArray<FPoint>& Neighbors);
     void MakeHole(const int32 Width, const int32 X, const int32 Y, TArray<int>& Maze);
 
-    void DebugPrintMap(TArray<int32>& Map) const;
+    //void DebugPrintMap(TArray<int32>& Map) const;
 
     void BuildLabirinth(TArray<int32>& InnerMap);
+
+
 };

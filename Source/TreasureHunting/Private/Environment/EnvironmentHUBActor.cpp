@@ -73,18 +73,17 @@ void AEnvironmentHUBActor::GenerateMaze()
 {
     for (int i = 0; i < Actors.Num(); i++)
         Actors[i]->Destroy();
+    Actors.Empty();
 
     int32 StartPointX = MakeRandomOddNumber(0, MazeLength);
     int32 StartPointY = MakeRandomOddNumber(0, MazeWidth);
-    FVector NewActorPosition = FVector(FloorActorSize.X * StartPointX, FloorActorSize.Y * StartPointY, 500);
-    ChangeActorPosition(NewActorPosition);
 
+    FVector NewActorPosition(FloorActorSize.X * StartPointX, FloorActorSize.Y * StartPointY, 500);
+    ChangeActorPosition(NewActorPosition);
     TArray<int32> InnerMap;
 
-    GetCoordsMap(InnerMap, MazeWidth, MazeLength, FVector2D(StartPointX, StartPointY));
-    DebugPrintMap(InnerMap);
-    //BuildLabirinth(InnerMap);
-
+    GetCoordsMap(InnerMap, MazeWidth, MazeLength);
+    BuildLabirinth(InnerMap);
 }
 
 void AEnvironmentHUBActor::BuildLabirinth(TArray<int32>& InnerMap)
@@ -93,14 +92,14 @@ void AEnvironmentHUBActor::BuildLabirinth(TArray<int32>& InnerMap)
     {
         int32 CurLen = i / MazeWidth;
         int32 CurWidth = i % MazeWidth;
-        if (InnerMap[i] == 1)
+        if (InnerMap[i] == WALL)
         {
             FTransform Transform = FTransform(FRotator::ZeroRotator,
                 FVector(CurLen * FloorActorSize.X, FloorActorSize.Y * CurWidth, FloorActorSize.Z / 2 + WallActorSize.Z / 2));
             Actors.Add(SpawnInstance(Transform, WallInstance));
+            UE_LOG(LogTemp, Display, TEXT("Num actors = %i"), Actors.Num());
         }
     }
-
 }
 
 int AEnvironmentHUBActor::MakeRandomOddNumber(int32 Min, int32 Max)
@@ -112,14 +111,17 @@ int AEnvironmentHUBActor::MakeRandomOddNumber(int32 Min, int32 Max)
     return RandOddInt;
 }
 
-void AEnvironmentHUBActor::GetCoordsMap(TArray<int32>& Map, const int32& Lenght, const int32& Width, const FVector2D& StartCoord)
+void AEnvironmentHUBActor::GetCoordsMap(TArray<int32>& Map, const int32& Width, const int32& Lenght)
 {
     FillStartCoordsMap(Map, Lenght, Width);
-    FVector2D StartCell = {1,1};
-    FVector2D CurrentCell = StartCell;
-    TArray<FVector2D> Neighbours;
-    TArray<FVector2D> Visited;
-    Map[Width * StartCell.X + StartCell.Y] = 2;
+
+    FPoint StartCell = {1, 1};
+
+    UE_LOG(LogTemp, Display, TEXT("StartPoint = %i %i"), StartCell.X, StartCell.Y);
+    FPoint CurrentCell = StartCell;
+    TArray<FPoint> Neighbours;
+    TArray<FPoint> Visited;
+    Map[Width * StartCell.X + StartCell.Y] = VISITED;
     do
     {
         GetNeighbours(Lenght, Width, Map, CurrentCell, Neighbours);
@@ -134,16 +136,16 @@ void AEnvironmentHUBActor::GetCoordsMap(TArray<int32>& Map, const int32& Lenght,
             Visited.Add(CurrentCell);
             CurrentCell = Neighbours[(rand() % Neighbours.Num())];
             Neighbours.Empty();
-            Map[Width * CurrentCell.Y + CurrentCell.X] = 2;
+            Map[Width * CurrentCell.Y + CurrentCell.X] = VISITED;
             MakeHole(Width, (Visited.Top().X + CurrentCell.X) / 2, (Visited.Top().Y + CurrentCell.Y) / 2, Map);
         }
 
     } while (Visited.Num());
 }
 void AEnvironmentHUBActor::GetNeighbours(
-    const int32 Height, const int32 Width, const TArray<int32>& Map, const FVector2D StartPoint, TArray<FVector2D>& Neighbors)
+    const int32 Height, const int32 Width, const TArray<int32>& Map, const FPoint StartPoint, TArray<FPoint>& Neighbors)
 {
-    FVector2D Temp;
+    FPoint Temp;
 
     if (StartPoint.X + 2 < Width && Map[Width * StartPoint.Y + (StartPoint.X + 2)] != 2)
     {
@@ -170,26 +172,27 @@ void AEnvironmentHUBActor::GetNeighbours(
 
 void AEnvironmentHUBActor::MakeHole(const int32 Width, const int32 X, const int32 Y, TArray<int>& Maze)
 {
-    Maze[Width * Y + X] = 0;
+    Maze[Width * Y + X] = CELL;
 }
 
 void AEnvironmentHUBActor::FillStartCoordsMap(TArray<int32>& Map, const int32& Lenght, const int32& Width)
 {
+
     for (int i = 0; i < Lenght; i++)
     {
         for (int j = 0; j < Width; j++)
         {
             if ((i % 2 != 0 && j % 2 != 0) && (i < Lenght - 1 && j < Width - 1))
-                Map.Add(0);
+                Map.Add(CELL);
             else
-                Map.Add(1);
+                Map.Add(WALL);
         }
     }
 }
-void AEnvironmentHUBActor::DebugPrintMap(TArray<int32>& Map) const
-{
-    for (int i = 0; i < Map.Num(); i++)
-    {
-        UE_LOG(LogTemp, Display, TEXT("%i "), Map[i]);
-    }
-}
+//void AEnvironmentHUBActor::DebugPrintMap(TArray<int32>& Map) const
+//{
+//    for (int i = 0; i < Map.Num(); i++)
+//    {
+//        UE_LOG(LogTemp, Display, TEXT("%i "), Map[i]);
+//    }
+//}
