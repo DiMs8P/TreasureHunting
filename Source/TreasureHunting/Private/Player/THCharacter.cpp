@@ -2,26 +2,28 @@
 
 #include "Player/THCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/THCharacterMovementComponent.h"
+#include "Components/THSpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 
 // Sets default values
-ATHCharacter::ATHCharacter()
+ATHCharacter::ATHCharacter(const FObjectInitializer& ObjInit)
+    : Super(ObjInit.SetDefaultSubobjectClass<UTHCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
     // Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 
-    SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
+    SpringArmComponent = CreateDefaultSubobject<UTHSpringArmComponent>("SpringArmComponent");
     SpringArmComponent->SetupAttachment(GetRootComponent());
 
     CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
     CameraComponent->SetupAttachment(SpringArmComponent);
-
 }
 
 // Called when the game starts or when spawned
 void ATHCharacter::BeginPlay()
 {
-
+    //SetStartPosition();
     check(CameraComponent);
     check(SpringArmComponent);
     Super::BeginPlay();
@@ -39,33 +41,39 @@ void ATHCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
     Super::SetupPlayerInputComponent(PlayerInputComponent);
     if (PlayerInputComponent)
     {
-        PlayerInputComponent->BindAxis("MoveForward", this, &ATHCharacter::MoveForward);
-        PlayerInputComponent->BindAxis("MoveRight", this, &ATHCharacter::MoveRight);
-        PlayerInputComponent->BindAxis("ZoomUp", this, &ATHCharacter::ZoomUp);
-        PlayerInputComponent->BindAxis("ZoomDown", this, &ATHCharacter::ZoomDown);
+        PlayerInputComponent->BindAction("ZoomIn", IE_Pressed, this, &ATHCharacter::CameraZoomIn);
+        PlayerInputComponent->BindAction("ZoomOut", IE_Pressed, this, &ATHCharacter::CameraZoomOut);
+        PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ATHCharacter::Jump);
+        PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ATHCharacter::RunStart);
+        PlayerInputComponent->BindAction("Run", IE_Released, this, &ATHCharacter::RunStop);
     }
 }
 
-void ATHCharacter::MoveForward(float Amount)
+
+void ATHCharacter::CameraZoomIn()
 {
-    if (Amount == 0.0f)
+    if (SpringArmComponent->TargetArmLength <= SpringArmComponent->GetArmMinLenght())
         return;
-    AddMovementInput(GetActorForwardVector(), Amount);
+    SpringArmComponent->TargetArmLength = SpringArmComponent->TargetArmLength - SpringArmComponent->GetArmClampValue();
 }
-
-void ATHCharacter::MoveRight(float Amount)
+void ATHCharacter::CameraZoomOut()
 {
-    if (Amount == 0.0f)
+    if (SpringArmComponent->TargetArmLength >= SpringArmComponent->GetArmMaxLenght())
         return;
-    AddMovementInput(GetActorRightVector(), Amount);
+    SpringArmComponent->TargetArmLength = SpringArmComponent->TargetArmLength + SpringArmComponent->GetArmClampValue();
 }
 
-void ATHCharacter::ZoomUp(float Amount)
+void ATHCharacter::RunStart()
 {
-    SpringArmComponent->TargetArmLength += Amount;
+    WantsToRun = true;
 }
 
-void ATHCharacter::ZoomDown(float Amount)
+void ATHCharacter::RunStop()
 {
-    SpringArmComponent->TargetArmLength -= Amount;
+    WantsToRun = false;
+}
+
+bool ATHCharacter::IsRunning() const
+{
+    return WantsToRun && !GetVelocity().IsZero();
 }

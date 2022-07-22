@@ -7,7 +7,7 @@
 #include "THCharacter.generated.h"
 
 class UCameraComponent;
-class USpringArmComponent;
+class UTHSpringArmComponent;
 
 UCLASS()
 class TREASUREHUNTING_API ATHCharacter : public ACharacter
@@ -16,7 +16,11 @@ class TREASUREHUNTING_API ATHCharacter : public ACharacter
 
 public:
     // Sets default values for this character's properties
-    ATHCharacter();
+    ATHCharacter(const FObjectInitializer& ObjInit);
+
+    UFUNCTION(BlueprintCallable)
+    bool IsRunning() const;
+
 
 protected:
     // Called when the game starts or when spawned
@@ -26,7 +30,7 @@ protected:
     UCameraComponent* CameraComponent;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
-    USpringArmComponent* SpringArmComponent;
+    UTHSpringArmComponent* SpringArmComponent;
 
 public:
     // Called every frame
@@ -39,6 +43,11 @@ private:
     void MoveForward(float Amount);
     void MoveRight(float Amount);
 
-    void ZoomUp(float Amount);
-    void ZoomDown(float Amount);
+    void RunStart();
+    void RunStop();
+    
+    void CameraZoomIn();
+    void CameraZoomOut();
+
+    bool WantsToRun;
 };
