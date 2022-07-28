@@ -14,6 +14,10 @@ public:
     virtual void SetupInputComponent() override;
     virtual void BeginPlay() override;
 
+    void ChangeInputUI();
+
+   // void SetInputUIState(bool NewState) { InputUIActive = NewState; }
+
 private:
-    void ShowUI();
+    bool InputUIActive = true;
 };

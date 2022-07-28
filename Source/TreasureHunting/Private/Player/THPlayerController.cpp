@@ -6,16 +6,27 @@
 void ATHPlayerController::SetupInputComponent()
 {
     Super::SetupInputComponent();
-    InputComponent->BindAction("ShowLevelUI", IE_Pressed, this, &ATHPlayerController::ShowUI);
+    InputComponent->BindAction("ChangeInputUI", IE_Pressed, this, &ATHPlayerController::ChangeInputUI);
 }
 
 void ATHPlayerController::BeginPlay()
 {
     Super::BeginPlay();
+    SetInputMode(FInputModeGameOnly());
 }
 
-void ATHPlayerController::ShowUI()
+void ATHPlayerController::ChangeInputUI()
 {
-    bShowMouseCursor = true;
-    SetInputMode(FInputModeUIOnly());
+    if (InputUIActive)
+    {
+        bShowMouseCursor = true;
+        InputUIActive = false;
+        SetInputMode(FInputModeUIOnly());
+    }
+    else
+    {
+        bShowMouseCursor = false;
+        InputUIActive = true;
+        SetInputMode(FInputModeGameOnly());
+    }
 }

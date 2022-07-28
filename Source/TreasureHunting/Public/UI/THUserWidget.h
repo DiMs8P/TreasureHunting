@@ -6,14 +6,12 @@
 #include "Blueprint/UserWidget.h"
 #include "THUserWidget.generated.h"
 
-
 class UButton;
 
 UCLASS()
 class TREASUREHUNTING_API UTHUserWidget : public UUserWidget
 {
     GENERATED_BODY()
-
 public:
     virtual bool Initialize() override;
 
@@ -24,5 +22,5 @@ protected:
 
 private:
     UFUNCTION()
-    void GenerateMaze();
+    void OnInitMaze();
 };

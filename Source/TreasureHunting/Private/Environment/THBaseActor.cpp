@@ -6,12 +6,8 @@
 // Sets default values
 ATHBaseActor::ATHBaseActor()
 {
-    // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-    PrimaryActorTick.bCanEverTick = true;
-
     StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("StaticMesh");
     SetRootComponent(StaticMeshComponent);
-
 }
 
 // Called when the game starts or when spawned
@@ -22,11 +18,6 @@ void ATHBaseActor::BeginPlay()
     ActorSize = StaticMeshComponent->GetStaticMesh()->GetBounds().BoxExtent * 2 * StaticMeshComponent->GetRelativeScale3D();
 }
 
-// Called every frame
-void ATHBaseActor::Tick(float DeltaTime)
-{
-    Super::Tick(DeltaTime);
-}
 FVector ATHBaseActor::GetActorSize() const
 {
     return ActorSize;

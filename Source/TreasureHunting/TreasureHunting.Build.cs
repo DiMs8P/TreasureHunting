@@ -16,7 +16,8 @@ public class TreasureHunting : ModuleRules
             "TreasureHunting/Public/Environment",
             "TreasureHunting/Public/Components",
             "TreasureHunting/Public/UI",
-            "TreasureHunting/Public/Menu"});
+            "TreasureHunting/Public/Menu",
+            "TreasureHunting/Public/Pickup"});
 
         // Uncomment if you are using Slate UI
         // PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

@@ -24,7 +24,15 @@ public:
 UENUM()
 enum ECellType
 {
-    CELL,
-    WALL,
+    FREE,
+    BLOCK,
     VISITED
+};
+
+UENUM()
+enum EEnvType
+{
+    FLOOR,
+    WALL,
+    CHEST
 };

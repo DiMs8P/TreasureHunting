@@ -3,3 +3,9 @@
 
 #include "Menu/THMenuPlayerController.h"
 
+void ATHMenuPlayerController::BeginPlay() {
+    Super::BeginPlay();
+
+    SetInputMode(FInputModeUIOnly());
+    bShowMouseCursor = true;
+}

@@ -24,10 +24,5 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
     UStaticMeshComponent* StaticMeshComponent;
 
-public:
-    // Called every frame
-    virtual void Tick(float DeltaTime) override;
-
-private:
     FVector ActorSize;
 };

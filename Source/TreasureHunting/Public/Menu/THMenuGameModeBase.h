@@ -13,5 +13,6 @@ UCLASS()
 class TREASUREHUNTING_API ATHMenuGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+public:
+    ATHMenuGameModeBase();
 };
