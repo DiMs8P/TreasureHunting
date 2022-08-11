@@ -21,12 +21,10 @@ void ATHPlayerController::ChangeInputUI()
     {
         bShowMouseCursor = true;
         InputUIActive = false;
-        SetInputMode(FInputModeUIOnly());
     }
     else
     {
         bShowMouseCursor = false;
         InputUIActive = true;
-        SetInputMode(FInputModeGameOnly());
     }
 }
