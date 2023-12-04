@@ -2,7 +2,9 @@
 
 #include "Pickup/THTrophyActor.h"
 #include "THCharacter.h"
+#include "THGameInstance.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ATHTrophyActor::ATHTrophyActor()
@@ -26,10 +28,20 @@ void ATHTrophyActor::NotifyActorBeginOverlap(AActor* OtherActor)
 {
     Super::NotifyActorBeginOverlap(OtherActor);
 
-    const auto Character = Cast<ATHCharacter>(OtherActor);
-    if (Character)
+    if (const auto Character = Cast<ATHCharacter>(OtherActor))
     {
         Destroy();
-        FGenericPlatformMisc::RequestExit(false);
+        if (!GetWorld())
+        {
+            return;
+        }
+
+        const auto THGameInstance = GetWorld()->GetGameInstance<UTHGameInstance>();
+        if (!THGameInstance)
+        {
+            return;
+        }
+
+        THGameInstance->OpenMailLevel();
     }
 }

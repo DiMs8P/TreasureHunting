@@ -14,6 +14,8 @@ class TREASUREHUNTING_API UTHGameInstance : public UGameInstance
 {
     GENERATED_BODY()
 public:
+    void OpenMailLevel() const;
+    
     FName GetStartupGameLevelName() const { return StartupGameLevel; }
 
 protected:

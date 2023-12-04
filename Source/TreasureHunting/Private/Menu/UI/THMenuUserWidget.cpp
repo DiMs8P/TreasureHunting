@@ -17,15 +17,15 @@ bool UTHMenuUserWidget::Initialize()
 
 void UTHMenuUserWidget::OnStartGame() {
     if (!GetWorld())
+    {
         return;
+    }
 
     const auto THGameInstance = GetWorld()->GetGameInstance<UTHGameInstance>();
     if (!THGameInstance)
-        return;
-    if (THGameInstance->GetStartupGameLevelName().IsNone())
     {
-        UE_LOG(LogTemp, Error, TEXT("Level Name is None!"));
         return;
     }
-    UGameplayStatics::OpenLevel(this, THGameInstance->GetStartupGameLevelName());
+
+    THGameInstance->OpenMailLevel();
 }
